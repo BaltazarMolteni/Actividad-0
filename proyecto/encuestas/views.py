@@ -1,23 +1,27 @@
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseRedirect
-from django.http import Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from .models import Encuesta, Respuesta
 from django.urls import reverse
+from django.views import generic
 
-def index(request):
-    latest_question_list = Encuesta.objects.order_by("-fecha_publ")[:5]
-    context = {"latest_question_list": latest_question_list}
-    return render(request, "encuestas/index.html", context)
+class IndexView(generic.ListView):
+    template_name = "encuestas/index.html"
+    context_object_name = "latest_question_list"
 
-def detalle(request, question_id):
-    question = get_object_or_404(Encuesta, pk=question_id)
-    return render(request, "encuestas/detalle.html", {"encuesta": question})
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Encuesta.objects.order_by("-fecha_publ")[:5]
 
-def resultados(request, question_id):
-    question = get_object_or_404(Encuesta, pk=question_id)
-    return render(request, "encuestas/resultados.html", {"encuesta": question})
 
+class DetailView(generic.DetailView):
+    model = Encuesta
+    template_name = "encuestas/detalle.html"
+
+
+class ResultsView(generic.DetailView):
+    model = Encuesta
+    template_name = "encuestas/resultados.html"
 
 def voto(request, question_id):
     question = get_object_or_404(Encuesta, pk=question_id)
