@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Detalle</title>
 </head>
 <body>
-    <h1>{{ encuesta.texto_encuesta }}</h1>
-    <ul>
-    {% for respuesta in encuesta.respuesta_set.all %}
-        <li>{{ respuesta.texto_respuesta }}</li>
-    {% endfor %}
-    </ul>
+    <form action="{% url 'encuestas:voto' encuesta.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><h1>{{ encuesta.texto_encuesta }}</h1></legend>
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+            {% for respuesta in encuesta.respuesta_set.all %}
+                <input type="radio" name="respuesta" id="respuesta{{ forloop.counter }}" value="{{ respuesta.id }}">
+                <label for="respuesta{{ forloop.counter }}">{{ respuesta.texto_respuesta }}</label><br>
+            {% endfor %}
+        </fieldset>
+        <input type="submit" value="voto">
+    </form>
 </body>
 </html>

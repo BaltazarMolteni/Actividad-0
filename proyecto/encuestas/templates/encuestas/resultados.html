@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados</title>
+</head>
+<body>
+    <h1>{{ encuesta.texto_encuesta }}</h1>
+
+    <ul>
+    {% for respuesta in encuesta.respuesta_set.all %}
+        <li>{{ respuesta.texto_respuesta }} -- {{ respuesta.votos }} voto{{ respuesta.votos|pluralize }}</li>
+    {% endfor %}
+    </ul>
+
+    <a href="{% url 'encuestas:detalle' encuesta.id %}">Votar de nuevo?</a>
+</body>
+</html>
